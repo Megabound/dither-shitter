@@ -18,6 +18,7 @@ MASK = ATKINSONMASK # which mask to use
 COLOURISEVIDEO = False # should the output for video include colour?
 COLOURISESTILL = True # should the output for stills include colour?
 CHUNKSIZE = 3 # How chunky to make the output, 1 is no chunking. Positive numbers only, not 0
+GIFDURATION = 0 # Time between gif frames
 # ------------
 
 # used for processing videos to gifs
@@ -47,7 +48,7 @@ def processVideo(fullPath):
     
     # save the gif to file
     print("Saving GIF file")
-    io.mimsave(os.path.join(directory, '_g' + filename), output, loop=0, duration = 0.3)
+    io.mimsave(os.path.join(directory, '_g' + str(CHUNKSIZE) + filename), output, loop=0, duration = GIFDURATION)
 
 # used for processing single images
 def processImage(fullPath):
@@ -57,7 +58,7 @@ def processImage(fullPath):
     directory = os.path.dirname(fullpath)
     # dither the image and save it to disk
     output = ip.pipeline(original, COLOURISESTILL, MASK, CHUNKSIZE)
-    cv2.imwrite(os.path.join(directory, '_s' + filename), output)    
+    cv2.imwrite(os.path.join(directory, '_s' + str(CHUNKSIZE) + filename), output)    
 
 #-------------------------Entry-------------------------------#
 
