@@ -3,20 +3,32 @@ import numpy as np
 import masks
 import cv2
 
-def dither(mask, img):
+def dither(mask, img, chunkSize):
     output = np.zeros(img.shape) 
     height = len(output) 
     width = len(output[0])      
-    maskMatrix, xOffset = masks.makeMaskMatrix(mask) 
+    maskMatrix, xOffset = masks.makeMaskMatrix(mask, chunkSize) 
     maskHeight = len(maskMatrix)
     maskWidth = len(maskMatrix[0])
-    for y in range(height): 
-        for x in range(width):
-            currentValue = img[y][x] + output[y][x] 
+    for y in range(0, height, chunkSize): 
+        for x in range(0, width, chunkSize):                                    
+            chunkXEnd = x + (chunkSize - 1)
+            if chunkXEnd > width - 1:
+                workingXSize = chunkXEnd = (width - 1)
+            else:
+                workingXSize = chunkSize
+                        
+            chunkYEnd = y + (chunkSize - 1)
+            if chunkYEnd > height - 1:
+                workingYSize = chunkYEnd - (height - 1)                 
+            else:
+                workingYSize = chunkSize
+
+            currentValue = np.average(np.add(img[y : y + workingYSize, x : x + workingXSize],output[y : y + workingYSize, x : x + workingXSize]))
             newValue = 0 if currentValue < 127 else 255 
-            output[y][x] = newValue 
+            output[y : y + workingYSize, x : x + workingXSize] = newValue 
             error = currentValue if (newValue == 0) else currentValue - 255
-            
+
             distributionMask = np.multiply(maskMatrix, error)
             imgXStart = x + xOffset
             maskXStart = 0
@@ -57,9 +69,9 @@ def colourise(img, dImg):
 
     return output  
 
-def pipeline(originalImage, doColourise, mask):    
+def pipeline(originalImage, doColourise, mask, chunkSize):    
     imgGreyScale = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
-    dithered = dither(mask, imgGreyScale)
+    dithered = dither(mask, imgGreyScale, chunkSize)
     
     if not doColourise:
         return dithered    

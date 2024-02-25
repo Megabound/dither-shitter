@@ -16,6 +16,7 @@ CALEBMASK    = np.array(([1,0,2/8],[2,0,1/8],[-1,1,1/8],[0,1,2/8],[1,1,1/8],[0,2
 MASK = ATKINSONMASK
 COLOURISEVIDEO = False
 COLOURISESTILL = False
+CHUNKSIZE = 2
 # ------------
 
 def processVideo(fullPath):
@@ -36,7 +37,7 @@ def processVideo(fullPath):
 
     for x in range(frameCount):
         print('Processing frame ', x)
-        output[x] = ip.pipeline(frames[x], COLOURISEVIDEO, MASK)
+        output[x] = ip.pipeline(frames[x], COLOURISEVIDEO, MASK, CHUNKSIZE)
 
     print("Saving GIF file")
     io.mimsave(os.path.join(directory, '_g' + filename), output, loop=0, duration = 0.3)
@@ -45,7 +46,7 @@ def processImage(fullPath):
     original = cv2.imread(fullpath)
     filename = os.path.basename(fullpath)
     directory = os.path.dirname(fullpath)
-    output = ip.pipeline(original, COLOURISESTILL, MASK)
+    output = ip.pipeline(original, COLOURISESTILL, MASK, CHUNKSIZE)
     cv2.imwrite(os.path.join(directory, '_s' + filename), output)    
 
 ## Entry ##
