@@ -43,17 +43,20 @@ def dither(mask, img, chunkSize):
             # make sure our mask fits in the space we have and trim it down if we need to
             imgXStart = x + xOffset
             maskXStart = 0
+            
             if imgXStart < 0:
                 imgXStart = 0
                 maskXStart = imgXStart - xOffset
             
             maskXEnd = x + maskWidth + xOffset
+            
             if maskXEnd > (width - 1):
                 columnCount = maskWidth - (maskXEnd - (width - 1)) - maskXStart
             else:
                 columnCount = maskWidth - maskXStart
 
             maskYEnd = y + maskHeight
+            
             if maskYEnd > (height - 1):
                 rowCount = maskHeight - (maskYEnd - (height - 1))
             else:
