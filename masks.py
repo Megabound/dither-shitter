@@ -12,6 +12,7 @@ def makeMaskMatrix(mask, size):
     maxY = int(np.max(mask[:,1]))
     # create an output mask scaled by the chunk size
     output = np.zeros((((maxY-minY)+1) * size,((maxX-minX)+1) * size))
+    
     # fill in N x N sections of mask with the same distribution where N is chunk size
     for i in range(maskLength):
         workingX = int(mask[i][0]) - minX

@@ -36,10 +36,8 @@ def dither(mask, img, chunkSize):
             output[y : y + workingYSize, x : x + workingXSize] = newValue 
             # calcualte the difference between the new value of the pixels and the old value
             error = currentValue if (newValue == 0) else currentValue - 255
-
             # get our error distribution mask by multiplying our error mask by the error calculated
             distributionMask = np.multiply(maskMatrix, error)
-
             # make sure our mask fits in the space we have and trim it down if we need to
             imgXStart = x + xOffset
             maskXStart = 0
