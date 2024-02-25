@@ -17,7 +17,7 @@ CALEBMASK    = np.array(([1,0,2/8],[2,0,1/8],[-1,1,1/8],[0,1,2/8],[1,1,1/8],[0,2
 MASK = ATKINSONMASK # which mask to use
 COLOURISEVIDEO = False # should the output for video include colour?
 COLOURISESTILL = True # should the output for stills include colour?
-CHUNKSIZE = 3 # How chunky to make the output, 1 is no chunking. Positive numbers only, not 0
+CHUNKSIZE = 2 # How chunky to make the output, 1 is no chunking. Positive numbers only, not 0
 GIFDURATION = 0 # Time between gif frames
 # ------------
 

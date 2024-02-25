@@ -19,7 +19,7 @@ def dither(mask, img, chunkSize):
             # calculate the image coordinates where the dither mask is to be applied, this is an N x N square where N is the chunk size                                    
             chunkXEnd = x + (chunkSize - 1)
             if chunkXEnd > width - 1:
-                workingXSize = chunkXEnd = (width - 1)
+                workingXSize = chunkXEnd - (width - 1)
             else:
                 workingXSize = chunkSize
                         
