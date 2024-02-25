@@ -1,5 +1,7 @@
+##Dealing with manipulating images
 import numpy as np
 import masks
+import cv2
 
 def dither(mask, img):
     output = np.zeros(img.shape) 
@@ -16,17 +18,17 @@ def dither(mask, img):
             error = currentValue if (newValue == 0) else currentValue - 255
             
             distributionMask = np.multiply(maskMatrix, error)
-            imgStart = x + xOffset
-            maskStart = 0
-            if imgStart < 0:
-                imgStart = 0
-                maskStart = imgStart - xOffset
+            imgXStart = x + xOffset
+            maskXStart = 0
+            if imgXStart < 0:
+                imgXStart = 0
+                maskXStart = imgXStart - xOffset
             
             maskXEnd = x + maskWidth + xOffset
             if maskXEnd > (width - 1):
-                columnCount = maskWidth - (maskXEnd - (width - 1)) - maskStart
+                columnCount = maskWidth - (maskXEnd - (width - 1)) - maskXStart
             else:
-                columnCount = maskWidth - maskStart
+                columnCount = maskWidth - maskXStart
 
             maskYEnd = y + maskHeight
             if maskYEnd > (height - 1):
@@ -34,7 +36,7 @@ def dither(mask, img):
             else:
                 rowCount = maskHeight
             
-            output[y : y+rowCount, imgStart : imgStart+columnCount] += distributionMask[0 : rowCount, maskStart : maskStart+columnCount]
+            output[y : y+rowCount, imgXStart : imgXStart+columnCount] += distributionMask[0 : rowCount, maskXStart : maskXStart+columnCount]
                             
     return output
 
@@ -54,3 +56,13 @@ def colourise(img, dImg):
                 output[y,x,:] = [255, 255, 255]
 
     return output  
+
+def pipeline(originalImage, doColourise, mask):    
+    imgGreyScale = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
+    dithered = dither(mask, imgGreyScale)
+    
+    if not doColourise:
+        return dithered    
+    
+    colourised = colourise(originalImage, dithered)
+    return colourised

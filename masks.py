@@ -1,3 +1,4 @@
+#dealing with manipulating masks
 import numpy as np
 
 def makeMaskMatrix(mask):

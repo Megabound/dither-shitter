@@ -18,16 +18,6 @@ COLOURISEVIDEO = False
 COLOURISESTILL = False
 # ------------
 
-def pipeline(originalImage, doColourise):    
-    imgGreyScale = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
-    dithered = ip.dither(MASK, imgGreyScale)
-    
-    if not doColourise:
-        return dithered    
-    
-    colourised = colourise(originalImage, dithered)
-    return colourised
-
 def processVideo(fullPath):
     video = cv2.VideoCapture(fullpath)
     filename = os.path.basename(fullpath)
@@ -46,7 +36,7 @@ def processVideo(fullPath):
 
     for x in range(frameCount):
         print('Processing frame ', x)
-        output[x] = pipeline(frames[x], COLOURISEVIDEO)
+        output[x] = ip.pipeline(frames[x], COLOURISEVIDEO, MASK)
 
     print("Saving GIF file")
     io.mimsave(os.path.join(directory, '_g' + filename), output, loop=0, duration = 0.3)
@@ -55,7 +45,7 @@ def processImage(fullPath):
     original = cv2.imread(fullpath)
     filename = os.path.basename(fullpath)
     directory = os.path.dirname(fullpath)
-    output = pipeline(original, COLOURISESTILL)
+    output = ip.pipeline(original, COLOURISESTILL, MASK)
     cv2.imwrite(os.path.join(directory, '_s' + filename), output)    
 
 ## Entry ##
