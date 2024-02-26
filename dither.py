@@ -18,19 +18,26 @@ MASK = ATKINSONMASK # which mask to use
 COLOURISEVIDEO = False # should the output for video include colour?
 COLOURISESTILL = True # should the output for stills include colour?
 CHUNKSIZE = 2 # How chunky to make the output, 1 is no chunking. Positive numbers only, not 0
-GIFDURATION = 0 # Time between gif frames
+GIFFPS = 0 # What FPS should the gif play at? 0 is original FPS.
 # ------------
 
 # used for processing videos to gifs
 def processVideo(fullPath):
     # use OpenCV to parse the video
     video = cv2.VideoCapture(fullpath)
+    
+    # if the user hasn't supplied an output framerate then use the videos own framerate
+    if GIFFPS == 0:
+        framesPerSecond = video.get(cv2.CAP_PROP_FPS)
+    else:
+        framesPerSecond = GIFFPS
+
     filename = os.path.basename(fullpath)
     directory = os.path.dirname(fullpath)
 
     # read individual frames and save them in the frames array
     frames = []
-    ret, frame = video.read()  # ret=True if it finds a frame else False.
+    ret, frame = video.read()  # ret=True if it finds a frame else False.    
     while ret:
         # read next frame
         ret, frame = video.read()
@@ -44,11 +51,13 @@ def processVideo(fullPath):
     # iterate through each frame in turn, converting it to a dithered output, when done put it in the output array
     for x in range(frameCount):
         print('Processing frame ', x)
-        output[x] = ip.pipeline(frames[x], COLOURISEVIDEO, MASK, CHUNKSIZE)
-    
+        output[x] = ip.pipeline(frames[x], COLOURISEVIDEO, MASK, CHUNKSIZE)    
+        if COLOURISEVIDEO:
+            output[x] = cv2.cvtColor(output[x], cv2.COLOR_BGR2RGB) 
+
     # save the gif to file
     print("Saving GIF file")
-    io.mimsave(os.path.join(directory, '_g' + str(CHUNKSIZE) + filename), output, loop=0, duration = GIFDURATION)
+    io.mimsave(os.path.join(directory, '_g' + str(CHUNKSIZE) + filename), output, loop=0, fps = framesPerSecond)
 
 # used for processing single images
 def processImage(fullPath):
