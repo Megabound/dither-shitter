@@ -57,7 +57,7 @@ def processVideo(fullPath):
 
     # save the gif to file
     print("Saving GIF file")
-    io.mimsave(os.path.join(directory, '_g' + str(CHUNKSIZE) + filename), output, loop=0, fps = framesPerSecond)
+    io.mimsave(os.path.join(directory, '_g' + str(CHUNKSIZE) + filename), output, loop=0, duration = 1000 * 1/framesPerSecond)
 
 # used for processing single images
 def processImage(fullPath):
