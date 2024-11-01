@@ -14,7 +14,7 @@ FLOYDMASK    = np.array(([1,0,7/16],[-1,1,3/16],[0,1,5/16],[1,1,1/16]))
 CALEBMASK    = np.array(([1,0,2/8],[2,0,1/8],[-1,1,1/8],[0,1,2/8],[1,1,1/8],[0,2,1/8]))
 
 # User options
-MASK = ATKINSONMASK # which mask to use
+MASK = FLOYDMASK # which mask to use
 COLOURISEVIDEO = False # should the output for video include colour?
 COLOURISESTILL = True # should the output for stills include colour?
 CHUNKSIZE = 2 # How chunky to make the output, 1 is no chunking. Positive numbers only, not 0
@@ -32,7 +32,7 @@ def processVideo(fullPath):
     else:
         framesPerSecond = GIFFPS
 
-    filename = os.path.basename(fullpath)
+    filename = os.path.basename(fullpath).replace(pathlib.Path(fullpath).suffix, "") + ".gif"
     directory = os.path.dirname(fullpath)
 
     # read individual frames and save them in the frames array
@@ -56,7 +56,7 @@ def processVideo(fullPath):
             output[x] = cv2.cvtColor(output[x], cv2.COLOR_BGR2RGB) 
 
     # save the gif to file
-    print("Saving GIF file")
+    print("Saving GIF file")    
     io.mimsave(os.path.join(directory, '_g' + str(CHUNKSIZE) + filename), output, loop=0, duration = 1000 * 1/framesPerSecond)
 
 # used for processing single images
@@ -83,9 +83,11 @@ filetype = pathlib.Path(fullpath).suffix
 
 # Take note of the current time, for timekeeping
 start_time = time.time()
+isVideo = filetype.lower().endswith('gif')
+isVideo = isVideo or filetype.lower().endswith('mp4')
 
 # If it's a gif process as video, otherwise process as stills 
-if filetype.lower() == '.gif':
+if isVideo:
     processVideo(fullpath)
 else:
     processImage(fullpath)
